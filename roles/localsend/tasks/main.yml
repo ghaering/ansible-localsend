@@ -1,0 +1,28 @@
+---
+# tasks/main.yml
+
+- name: Ensure required dependencies are installed
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - wget
+    - gdebi-core
+  become: yes
+
+- name: Download the LocalSend .deb package
+  get_url:
+    url: "https://github.com/localsend/localsend/releases/download/v1.15.4/LocalSend-1.15.4-linux-x86-64.deb"
+    dest: "/tmp/LocalSend-1.15.4-linux-x86-64.deb"
+    mode: '0644'
+
+- name: Install the LocalSend .deb package
+  apt:
+    deb: "/tmp/LocalSend-1.15.4-linux-x86-64.deb"
+    state: present
+  become: yes
+
+- name: Clean up the downloaded .deb package
+  file:
+    path: "/tmp/LocalSend-1.15.4-linux-x86-64.deb"
+    state: absent
